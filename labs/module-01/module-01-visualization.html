@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 01 — GitHub Actions Architecture | Stalwart Learning</title>
+<style>
+:root{
+  --bg:#f6f8fa; --card:#ffffff; --line:#d0d7de; --text:#1f2328; --muted:#57606a;
+  --blue:#0969da; --purple:#8250df; --green:#1a7f37; --amber:#bf8700; --red:#cf222e;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--text); font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; padding-bottom:4rem}
+.conf{background:#1f2328; color:#ffdf5d; font:600 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; padding:.55rem 1.25rem}
+.topnav{display:flex; flex-wrap:wrap; gap:.35rem; align-items:center; background:var(--card); border-bottom:1px solid var(--line); padding:.5rem 1.25rem; position:sticky; top:0; z-index:50}
+.topnav .brand{font-weight:700; margin-right:.75rem; font-size:13px; color:var(--blue)}
+.topnav a{font-size:12px; color:var(--text); text-decoration:none; padding:.25rem .6rem; border-radius:999px; border:1px solid var(--line); background:#fff}
+.topnav a:hover{border-color:var(--blue); color:var(--blue)}
+.topnav a.here{background:var(--blue); color:#fff; border-color:var(--blue)}
+header{padding:1.75rem 1.25rem 1rem; max-width:1080px; margin:0 auto}
+header h1{font-size:1.7rem; line-height:1.2}
+header .sub{color:var(--muted); margin-top:.4rem}
+main{max-width:1080px; margin:0 auto; padding:0 1.25rem}
+section{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:1.4rem 1.5rem; margin-top:1.25rem}
+section h2{font-size:1.15rem; margin-bottom:.35rem; display:flex; align-items:center; gap:.5rem}
+section h2 .no{color:var(--blue); font-family:var(--mono); font-size:.85rem; background:#ddf4ff; padding:.15rem .5rem; border-radius:6px}
+section h2 .adolink{font-size:.75rem; color:var(--muted); font-weight:500}
+section .lead{color:var(--muted); margin-bottom:1rem}
+h3{font-size:.95rem; margin:1rem 0 .5rem; color:var(--text)}
+button{font:inherit; cursor:pointer; border:1px solid var(--line); background:#fff; color:var(--text); border-radius:8px; padding:.45rem .85rem; transition:all .12s}
+button:hover{border-color:var(--blue); color:var(--blue)}
+button:disabled{opacity:.45; cursor:default}
+button.primary{background:var(--blue); color:#fff; border-color:var(--blue)}
+button.primary:hover{filter:brightness(1.08); color:#fff}
+.chips{display:flex; flex-wrap:wrap; gap:.5rem; margin:.6rem 0}
+code,pre{font-family:var(--mono)}
+pre{background:#0d1117; color:#e6edf3; border-radius:10px; padding:1rem 1.1rem; overflow:auto; font-size:12.5px; line-height:1.55; margin:.6rem 0}
+pre .c{color:#8b949e}
+pre .k{color:#ff7b72}
+pre .s{color:#a5d6ff}
+pre .f{color:#d2a8ff}
+.hl{background:rgba(255,223,93,.25); outline:1px solid #ffdf5d; border-radius:3px}
+.flash{animation:fl .5s ease 2}
+@keyframes fl{0%{box-shadow:0 0 0 0 rgba(9,105,218,.55)}100%{box-shadow:0 0 0 12px rgba(9,105,218,0)}}
+.flow{display:flex; flex-wrap:wrap; align-items:stretch; gap:.6rem; margin:1rem 0}
+.node{flex:1 1 160px; border:2px solid var(--line); border-radius:12px; padding:.8rem .9rem; background:#fff; transition:all .2s}
+.node .t{font-weight:700; font-size:.9rem}
+.node .d{font-size:.78rem; color:var(--muted); margin-top:.2rem}
+.node.active{border-color:var(--blue); background:#ddf4ff; transform:translateY(-3px)}
+.node.done{border-color:var(--green); background:#dafbe1}
+.arrow{align-self:center; color:var(--muted); font-size:1.2rem}
+.log{background:#0d1117; color:#e6edf3; font:12px/1.7 var(--mono); border-radius:10px; padding:1rem; height:190px; overflow:auto; margin-top:.8rem}
+.log .ln{display:block; white-space:pre-wrap}
+.log .ok{color:#3fb950}.log .warn{color:#d29922}.log .info{color:#79c0ff}.log .dim{color:#8b949e}
+.split{display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; margin-top:.6rem}
+@media(max-width:820px){.split{grid-template-columns:1fr}}
+.yamls{font-size:12px; line-height:1.9; border:1px solid var(--line); border-radius:10px; padding:.6rem .9rem; background:#fff; overflow:auto; white-space:pre; cursor:pointer}
+.yamls .seg{cursor:pointer; border-radius:4px; padding:0 2px}
+.yamls .seg:hover{background:#ddf4ff}
+.yamls .seg.sel{background:var(--blue); color:#fff}
+.explain{border:1px solid var(--line); border-left:4px solid var(--blue); border-radius:10px; padding:1rem; background:#f6f8fa; min-height:180px}
+.explain .x-name{font-weight:700; font-size:1rem}
+.explain .x-ado{font-size:.8rem; color:var(--purple); margin-top:.5rem; font-weight:600}
+.tabrow{display:flex; gap:.4rem; flex-wrap:wrap; margin:.6rem 0}
+.tab{font-size:.82rem}
+.tab.on{background:var(--purple); color:#fff; border-color:var(--purple)}
+.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:.7rem; margin:.8rem 0}
+.stat{border:1px solid var(--line); border-radius:10px; padding:.75rem .9rem; background:#fff}
+.stat b{display:block; font-size:1.05rem}
+.stat span{font-size:.78rem; color:var(--muted)}
+.note{border:1px solid var(--amber); background:#fff8c5; border-radius:10px; padding:.8rem 1rem; font-size:.86rem; margin:.8rem 0}
+footer{max-width:1080px; margin:2rem auto 0; padding:0 1.25rem; color:var(--muted); font-size:.8rem; border-top:1px solid var(--line); padding-top:1rem}
+</style>
+</head>
+<body>
+<div class="conf">Confidential · Stalwart Learning — Module 01 · GitHub Actions Architecture</div>
+<nav class="topnav">
+  <span class="brand">Session 1 · Core Concepts</span>
+  <a class="here" href="module-01-visualization.html">01 Architecture</a>
+  <a href="../module-02/module-02-visualization.html">02 Events &amp; Triggers</a>
+  <a href="../module-03/module-03-visualization.html">03 Jobs &amp; Control</a>
+  <a href="../module-04/module-04-visualization.html">04 Actions &amp; Reuse</a>
+  <a href="../module-05/module-05-visualization.html">05 Copilot</a>
+</nav>
+<header>
+  <h1>GitHub Actions Architecture — interactive execution model</h1>
+  <p class="sub">Click an event, run the pipeline, and watch how <b>event → workflow → job → step → runner</b> fit together. Companion to <code>guides/module-01-github-actions-architecture.md</code>.</p>
+</header>
+<main>
+
+<section>
+  <h2><span class="no">1.1</span> The execution model — run it <span class="adolink">(ADO mapping: stages → jobs → tasks)</span></h2>
+  <p class="lead">An <b>event</b> starts a <b>workflow</b> (the YAML). The workflow defines <b>jobs</b>, each job runs on its own fresh <b>runner</b> and executes ordered <b>steps</b>. Steps may be shell commands or reusable <b>Actions</b>.</p>
+  <div class="chips" id="evchips">
+    <button class="primary" data-ev="push">Run: push to main</button>
+    <button data-ev="pr">Run: pull_request opened</button>
+    <button data-ev="sched">Run: schedule (cron)</button>
+    <button data-ev="manual">Run: workflow_dispatch (manual)</button>
+    <button id="resetbtn">Reset</button>
+  </div>
+  <div class="flow" id="flow">
+    <div class="node" id="n-event"><div class="t">1 · Event</div><div class="d">Something happened on GitHub — push, PR, cron, manual click</div></div>
+    <div class="arrow">→</div>
+    <div class="node" id="n-wf"><div class="t">2 · Workflow</div><div class="d"><code>.github/workflows/ci.yml</code> matching the event is loaded</div></div>
+    <div class="arrow">→</div>
+    <div class="node" id="n-job"><div class="t">3 · Job</div><div class="d">Unit of work; <code>needs</code> links jobs; parallel by default</div></div>
+    <div class="arrow">→</div>
+    <div class="node" id="n-step"><div class="t">4 · Steps</div><div class="d">Ordered commands / Actions; a failing step stops the job</div></div>
+    <div class="arrow">→</div>
+    <div class="node" id="n-runner"><div class="t">5 · Runner</div><div class="d">Ephemeral machine (ubuntu-latest). Wiped after each run</div></div>
+  </div>
+  <div class="log" id="log"><span class="ln dim">— Console · click an event to start —</span></div>
+</section>
+
+<section>
+  <h2><span class="no">1.2</span> Workflow file anatomy — click any block</h2>
+  <p class="lead">Every workflow file declares <b>what</b> should happen. Click a highlighted block to see what it does and how it maps from ADO.</p>
+  <div class="split">
+    <div>
+      <pre class="yamls" id="yaml" aria-label="clickable workflow yaml"><span class="seg" data-k="name">name: CI</span>
+<span class="seg" data-k="on">on:
+  push:
+    branches: [main]
+  pull_request:</span>
+<span class="seg" data-k="permissions">permissions:
+  contents: read</span>
+<span class="seg" data-k="env">env:
+  NODE_VERSION: '20'</span>
+<span class="seg" data-k="jobs">jobs:
+  build:
+    runs-on: ubuntu-latest</span>
+<span class="seg" data-k="steps">    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci</span>
+<span class="seg" data-k="run">      - run: npm run build
+        if: ${{ github.event_name == 'push' }}</span></pre>
+    </div>
+    <div class="explain" id="explain">
+      <div class="x-name">Click a block →</div>
+      <div id="x-body"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">1.3</span> Where did “stages” go? <span class="adolink">(structural ADO mapping)</span></h2>
+  <p class="lead">ADO pipelines are stages → jobs → tasks. GitHub Actions has <b>no stages key</b> — teams express the same idea three ways. Choose the one that matches your intent.</p>
+  <div class="tabrow" id="stage-tabs">
+    <button class="tab on" data-s="needs">1 · Job + needs</button>
+    <button class="tab" data-s="envs">2 · Environments</button>
+    <button class="tab" data-s="wf">3 · Separate workflows</button>
+  </div>
+  <div id="stage-detail"></div>
+</section>
+
+<section>
+  <h2><span class="no">1.4</span> GitHub-hosted vs self-hosted runners <span class="adolink">(≈ MS-hosted vs private agents)</span></h2>
+  <div class="stats">
+    <div class="stat"><b>Automatic</b><span>GitHub-hosted: provisioned per run, patched by GitHub</span></div>
+    <div class="stat"><b>Ephemeral</b><span>Fresh OS image every run — never treat it as persistent</span></div>
+    <div class="stat"><b>Public net</b><span>GitHub-hosted can't reach your VNet. Self-hosted can</span></div>
+    <div class="stat"><b>Label-scoped</b><span>Self-hosted selected via <code>runs-on:</code> label — secure it well</span></div>
+  </div>
+  <div class="note"><b>For this course (AKS microservices):</b> GitHub-hosted for CI (build/test/scan). Self-hosted only when you need private-network access, persistent state, or specialised hardware — e.g. a runner inside your cluster/VNet for the GitOps hand-off deployment job in Session 3.</div>
+</section>
+
+</main>
+<footer>© Stalwart Learning · Confidential · Module 01 of 05 · Source: course outline Session 1 · For training use only.</footer>
+
+<script>
+const log = document.getElementById('log');
+const flow = {event:document.getElementById('n-event'), wf:document.getElementById('n-wf'), job:document.getElementById('n-job'), step:document.getElementById('n-step'), runner:document.getElementById('n-runner')};
+let anim = null;
+
+function put(msg, cls='info'){
+  const span = document.createElement('span');
+  span.className = 'ln ' + cls;
+  span.textContent = msg;
+  log.appendChild(span);
+  log.scrollTop = log.scrollHeight;
+}
+function setActive(k){ Object.values(flow).forEach(n=>{n.classList.remove('active','done','flash')}); }
+function mark(k, cls='active'){
+  const n = flow[k];
+  n.classList.add(cls);
+  n.classList.add('flash');
+  setTimeout(()=>n.classList.remove('flash'), 600);
+}
+const EVENTS = {
+  push:   ['push to main → commit 3f9ab2c','webhook payload carries commit, branch, repo, pusher'],
+  pr:     ['pull_request #42 opened','payload carries base/head refs, changed files, PR author'],
+  sched:  ['schedule fired (cron 0 2 * * * )','no payload — only the github context is available'],
+  manual: ['workflow_dispatch — someone clicked "Run workflow"','inputs come from the button dialog (tags, env, etc.)']
+};
+function run(ev){
+  if(anim){ clearTimeout(anim); }
+  log.innerHTML='';
+  const [e1,e2] = EVENTS[ev];
+  put('⟶ Event detected: '+e1,'info');
+  anim = setTimeout(()=>{ put('Workflow matched: .github/workflows/ci.yml', 'info'); mark('event','done'); mark('wf'); }, 450);
+  anim = setTimeout(()=>{ put('github evaluates triggers for '+ev, 'dim'); }, 900);
+  anim = setTimeout(()=>{ put('Job "build" assigned → runner ubuntu-latest (fresh machine)', 'warn'); mark('wf','done'); mark('job'); }, 1350);
+  anim = setTimeout(()=>{ put('Runner checked out the repository', 'dim'); }, 1800);
+  anim = setTimeout(()=>{ put('Step 1: actions/checkout@v4 … ok', 'ok'); mark('job','done'); mark('step'); }, 2250);
+  anim = setTimeout(()=>{ put('Step 2: actions/setup-node@v4 … ok', 'ok'); }, 2700);
+  anim = setTimeout(()=>{ put('Step 3: npm ci && npm run build … ok', 'ok'); }, 3150);
+  anim = setTimeout(()=>{ put('Job finished with exit code 0 → status: success', 'ok'); mark('step','done'); mark('runner'); }, 3600);
+  anim = setTimeout(()=>{ put('Runner destroyed (ephemeral). Run recorded in Actions tab.', 'dim'); mark('runner','done'); }, 4050);
+  anim = setTimeout(()=>{ put('✓ '+e2, 'dim'); }, 4500);
+}
+
+document.getElementById('evchips').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('#evchips button.primary').forEach(x=>x.classList.remove('primary'));
+  if(b.id==='resetbtn'){
+    setActive(); log.innerHTML='<span class="ln dim">— Console · click an event to start —</span>';
+    return;
+  }
+  b.classList.add('primary');
+  run(b.dataset.ev);
+});
+
+/* ---- anatomy explorer ---- */
+const EXPLAIN = {
+  name: {t:'name', ado:'ADO: pipeline display name', d:'A friendly label shown on the Actions run page. It does not affect execution.'},
+  on:   {t:'on — triggers', ado:'ADO: pipeline triggers (CI/PR/schedules)', d:'Declares which events start this workflow. If no event fires, the workflow never runs. Push, pull_request, schedule, workflow_dispatch, repository_dispatch, release and more (Module 02).'},
+  permissions:{t:'permissions — least privilege', ado:'ADO: no direct equivalent (ADO uses scoped service connections)', d:'Sets the default permissions for the auto-generated GITHUB_TOKEN. contents: read is the safe baseline. If you omit this block, the token gets broad default permissions — a supply-chain risk (Module 15, Session 3).'},
+  env:  {t:'env', ado:'ADO: pipeline variables', d:'Variables available to every job/step in this workflow (unless overridden). Referenced as ${{ env.NAME }}. Secrets live separately.'},
+  jobs: {t:'jobs', ado:'ADO: jobs (and stages via needs-chains)', d:'Each job runs on its own fresh runner. Jobs run in parallel by default; add needs: to sequence them. Every job must set runs-on.'},
+  steps:{t:'steps', ado:'ADO: tasks', d:'Ordered list of commands/Actions executed inside the job. A failing step stops remaining steps in that job. Actions are reusable units — e.g. actions/checkout@v4.'},
+  run:  {t:'run + if', ado:'ADO: script tasks + custom conditions', d:'run: executes a shell command. if: controls whether the step runs based on contexts like github.event_name. Combined they are the building blocks of conditional pipelines.'}
+};
+const yamlEl = document.getElementById('yaml');
+yamlEl.addEventListener('click', e=>{
+  const seg = e.target.closest('.seg'); if(!seg) return;
+  yamlEl.querySelectorAll('.seg.sel').forEach(s=>s.classList.remove('sel'));
+  seg.classList.add('sel');
+  const x = EXPLAIN[seg.dataset.k];
+  document.querySelector('.explain .x-name').textContent = x.t;
+  document.getElementById('x-body').innerHTML =
+    '<div class="x-ado">' + x.ado + '</div><p style="margin-top:.6rem">' + x.d + '</p>';
+});
+
+/* ---- stage mapping tabs ---- */
+const STAGES = {
+  needs: {
+    title:'Option 1 — Chained jobs with needs',
+    yaml:`jobs:
+  build:
+    runs-on: ubuntu-latest
+  test:
+    needs: build        # waits for build
+  deploy:
+    needs: test         # waits for test`,
+    when:'The default choice. Each step is just a unit of work with no human approval involved.',
+    ado:'≈ ADO stages (build → test → deploy running sequentially).'
+  },
+  envs: {
+    title:'Option 2 — Environments (deployment targets)',
+    yaml:`jobs:
+  deploy:
+    environment: production   # dev / staging / prod
+    runs-on: ubuntu-latest`,
+    when:'When the "stage" is really a deployment target with approval gates and required reviewers (Session 3, Module 13).',
+    ado:'≈ ADO environments + approvals on a stage.'
+  },
+  wf: {
+    title:'Option 3 — Separate workflows, linked by events',
+    yaml:`# ci.yml — build & test
+on: [push, pull_request]
+# release.yml — triggered when CI completes
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]`,
+    when:'When CI and CD are owned by different files/teams and you want a clean hand-off boundary — the natural fit for this course\'s GitOps flow.',
+    ado:'≈ ADO build pipeline + release pipeline.'
+  }
+};
+const stageTabs = document.getElementById('stage-tabs');
+const stageDetail = document.getElementById('stage-detail');
+function showStage(k){
+  stageTabs.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on', t.dataset.s===k));
+  const s = STAGES[k];
+  stageDetail.innerHTML =
+    '<h3>' + s.title + '</h3>' +
+    '<div class="split"><pre>' + s.yaml + '</pre>' +
+    '<div><p>' + s.when + '</p><p class="note" style="margin-top:.6rem"><b>ADO:</b> ' + s.ado + '</p></div></div>';
+}
+stageTabs.addEventListener('click', e=>{ const b=e.target.closest('.tab'); if(b) showStage(b.dataset.s); });
+showStage('needs');
+</script>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 03 — Jobs, Steps &amp; Execution Control | Stalwart Learning</title>
+<style>
+:root{
+  --bg:#f6f8fa; --card:#ffffff; --line:#d0d7de; --text:#1f2328; --muted:#57606a;
+  --blue:#0969da; --purple:#8250df; --green:#1a7f37; --amber:#bf8700; --red:#cf222e;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--text); font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; padding-bottom:4rem}
+.conf{background:#1f2328; color:#ffdf5d; font:600 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; padding:.55rem 1.25rem}
+.topnav{display:flex; flex-wrap:wrap; gap:.35rem; align-items:center; background:var(--card); border-bottom:1px solid var(--line); padding:.5rem 1.25rem; position:sticky; top:0; z-index:50}
+.topnav .brand{font-weight:700; margin-right:.75rem; font-size:13px; color:var(--blue)}
+.topnav a{font-size:12px; color:var(--text); text-decoration:none; padding:.25rem .6rem; border-radius:999px; border:1px solid var(--line); background:#fff}
+.topnav a:hover{border-color:var(--blue); color:var(--blue)}
+.topnav a.here{background:var(--blue); color:#fff; border-color:var(--blue)}
+header{padding:1.75rem 1.25rem 1rem; max-width:1080px; margin:0 auto}
+header h1{font-size:1.7rem; line-height:1.2}
+header .sub{color:var(--muted); margin-top:.4rem}
+main{max-width:1080px; margin:0 auto; padding:0 1.25rem}
+section{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:1.4rem 1.5rem; margin-top:1.25rem}
+section h2{font-size:1.15rem; margin-bottom:.35rem; display:flex; align-items:center; gap:.5rem}
+section h2 .no{color:var(--blue); font-family:var(--mono); font-size:.85rem; background:#ddf4ff; padding:.15rem .5rem; border-radius:6px}
+section .lead{color:var(--muted); margin-bottom:1rem}
+h3{font-size:.95rem; margin:1rem 0 .5rem}
+button{font:inherit; cursor:pointer; border:1px solid var(--line); background:#fff; color:var(--text); border-radius:8px; padding:.45rem .85rem; transition:all .12s}
+button:hover{border-color:var(--blue); color:var(--blue)}
+button.primary{background:var(--blue); color:#fff; border-color:var(--blue)}
+button.primary:hover{filter:brightness(1.08); color:#fff}
+.chips{display:flex; flex-wrap:wrap; gap:.5rem; margin:.6rem 0}
+code,pre{font-family:var(--mono)}
+pre{background:#0d1117; color:#e6edf3; border-radius:10px; padding:1rem 1.1rem; overflow:auto; font-size:12.5px; line-height:1.6; margin:.6rem 0}
+pre .c{color:#8b949e}
+.note{border:1px solid var(--amber); background:#fff8c5; border-radius:10px; padding:.8rem 1rem; font-size:.86rem; margin:.8rem 0}
+.gantt{border:1px solid var(--line); border-radius:10px; padding:1rem; margin:.8rem 0; background:#fff}
+.grow{display:grid; grid-template-columns:150px 1fr; align-items:center; gap:.6rem; margin:.45rem 0; font-size:.84rem}
+.grow .lbl{font-weight:600; text-align:right; font-family:var(--mono); font-size:.78rem}
+.grow .track{background:#eaeef2; border-radius:6px; height:26px; position:relative; overflow:hidden}
+.grow .bar{position:absolute; top:0; bottom:0; left:0; width:0; border-radius:6px; background:var(--blue); transition:width .3s}
+.grow .bar.done{background:var(--green)}
+.grow .bar.fail{background:var(--red)}
+.grow .bar.queued{background:var(--amber)}
+.grow .bar.run{animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.55}}
+.tl{font:11px var(--mono); color:var(--muted); text-align:center; margin-top:.4rem}
+.statusdot{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:.35rem}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse; width:100%; font-size:.86rem; margin:.6rem 0}
+th,td{border:1px solid var(--line); padding:.5rem .7rem; text-align:left; vertical-align:top}
+th{background:#f6f8fa; font-size:.78rem; text-transform:uppercase; letter-spacing:.04em}
+.expr{display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; margin:.6rem 0}
+.expr select, .expr input{font:13px var(--mono); padding:.45rem .6rem; border:1px solid var(--line); border-radius:8px}
+.expr select:focus, .expr input:focus{outline:2px solid var(--blue)}
+.verdict{font-weight:700; border-radius:8px; padding:.35rem .7rem}
+.verdict.t{background:#dafbe1; color:var(--green)}
+.verdict.f{background:#ffebe9; color:var(--red)}
+.mxgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:.6rem; margin:.6rem 0}
+.mxcell{border:1px solid var(--line); border-radius:8px; padding:.55rem .7rem; font:11.5px var(--mono); background:#f6f8fa}
+.mxcell b{color:var(--purple)}
+.check{display:flex; gap:.5rem; align-items:center; margin:.3rem 0; font-size:.9rem}
+.check input{width:16px; height:16px}
+footer{max-width:1080px; margin:2rem auto 0; padding:1rem 1.25rem 0; color:var(--muted); font-size:.8rem; border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="conf">Confidential · Stalwart Learning — Module 03 · Jobs, Steps &amp; Execution Control</div>
+<nav class="topnav">
+  <span class="brand">Session 1 · Core Concepts</span>
+  <a href="../module-01/module-01-visualization.html">01 Architecture</a>
+  <a href="../module-02/module-02-visualization.html">02 Events &amp; Triggers</a>
+  <a class="here" href="module-03-visualization.html">03 Jobs &amp; Control</a>
+  <a href="../module-04/module-04-visualization.html">04 Actions &amp; Reuse</a>
+  <a href="../module-05/module-05-visualization.html">05 Copilot</a>
+</nav>
+<header>
+  <h1>Jobs, Steps &amp; Execution Control — watch a pipeline run</h1>
+  <p class="sub">Simulate <code>needs</code> scheduling, probe <code>if:</code> status functions, and generate a <code>matrix</code>. Companion to <code>guides/module-03-jobs-steps-execution-control.md</code>.</p>
+</header>
+<main>
+
+<section>
+  <h2><span class="no">3.1</span> DAG simulator — parallel &amp; dependent jobs</h2>
+  <p class="lead">Jobs run in parallel by default; <code>needs:</code> makes one wait for another. Simulate both. Click a job bar to fail it and watch downstream react.</p>
+  <div class="chips">
+    <button id="run-sim" class="primary">▶ Run pipeline</button>
+    <button id="reset-sim">↺ Reset</button>
+    <span style="font-size:.8rem; color:var(--muted)">Click a bar mid-run to inject a failure</span>
+  </div>
+  <div class="gantt" id="gantt"></div>
+  <div class="tl" id="timeline"></div>
+  <pre id="dag-yaml">jobs:
+  lint:
+    runs-on: ubuntu-latest
+  test:
+    needs: lint              # waits for lint
+    strategy:
+      matrix: { node: [18, 20, 22] }   # 3 parallel test jobs
+  build:
+    needs: lint              # independent of test → parallel with it
+  docker:
+    needs: [test, build]     # waits for both
+  deploy:
+    needs: docker
+    environment: production  # approval gate (Module 13)</pre>
+</section>
+
+<section>
+  <h2><span class="no">3.2</span> <code>if:</code> expression explorer</h2>
+  <p class="lead">The four status functions control whether a step/job runs after upstream results. Choose a scenario.</p>
+  <div class="expr">
+    <select id="ifsel">
+      <option value="always">always()</option>
+      <option value="success">success() — default</option>
+      <option value="failure">failure()</option>
+      <option value="cancelled">cancelled()</option>
+      <option value="custom">custom expression</option>
+    </select>
+    <input id="ifcustom" value="github.event_name == 'push'" style="display:none; width:260px" spellcheck="false">
+    <span id="ifverdict"></span>
+  </div>
+  <div class="tblwrap">
+  <table>
+    <tr><th>Upstream result</th><th>always()</th><th>success()</th><th>failure()</th><th>cancelled()</th></tr>
+    <tr><td>Success</td><td id="r-s-always">✓</td><td id="r-s-success">✓</td><td id="r-s-failure">✗</td><td id="r-s-cancelled">✗</td></tr>
+    <tr><td>Failure</td><td id="r-f-always">✓</td><td id="r-f-success">✗</td><td id="r-f-failure">✓</td><td id="r-f-cancelled">✗</td></tr>
+    <tr><td>Cancelled</td><td id="r-c-always">✓</td><td id="r-c-success">✗</td><td id="r-c-failure">✗</td><td id="r-c-cancelled">✓</td></tr>
+  </table>
+  </div>
+  <div class="note"><b>Patterns:</b> always() → cleanup/summary steps · failure() → notifications · cancelled() → release queued runners · most steps should keep the implicit success() (no <code>if:</code> at all). Use <code>continue-on-error: true</code> when a non-blocking check should not fail the job.</div>
+</section>
+
+<section>
+  <h2><span class="no">3.3</span> Matrix builder</h2>
+  <p class="lead">Pick Node versions and OSes — a matrix expands into one job per combination.</p>
+  <div class="chips" id="mx-checkboxes">
+    <label class="check"><input type="checkbox" data-v="18" checked> Node 18</label>
+    <label class="check"><input type="checkbox" data-v="20" checked> Node 20</label>
+    <label class="check"><input type="checkbox" data-v="22"> Node 22</label>
+    <label class="check"><input type="checkbox" data-v="24"> Node 24</label>
+    <label class="check"><input type="checkbox" data-o="ubuntu-latest" checked> ubuntu-latest</label>
+    <label class="check"><input type="checkbox" data-o="windows-latest"> windows-latest</label>
+  </div>
+  <pre id="mx-yaml"></pre>
+  <div class="mxgrid" id="mx-cells"></div>
+  <p class="note" style="background:#f6f8fa;border-color:var(--line)"><b>Concurrency control</b> — limit simultaneous runs per branch:<br><code>concurrency: { group: ci-${{ github.ref }}, cancel-in-progress: true }</code> — the older run for the same ref is cancelled and its runner freed (badges: queued ⇒ bar shown amber).</p>
+</section>
+
+<section>
+  <h2><span class="no">3.4</span> Runner &amp; execution control cheat-sheet</h2>
+  <table>
+    <tr><th>Tool</th><th>Purpose</th><th>ADO equivalent</th></tr>
+    <tr><td><code>needs:</code></td><td>Order jobs / build a DAG</td><td>Stage dependencies</td></tr>
+    <tr><td><code>strategy.matrix</code></td><td>Run N parameter combinations in parallel</td><td>Matrix strategy in a job</td></tr>
+    <tr><td><code>if:</code> / status functions</td><td>Conditional steps after results</td><td>Custom conditions</td></tr>
+    <tr><td><code>timeout-minutes</code></td><td>Cap a job (default 360 / 30 for GH-hosted queue)</td><td>Timeout</td></tr>
+    <tr><td><code>continue-on-error</code></td><td>Non-blocking checks</td><td>continueOnError</td></tr>
+    <tr><td><code>concurrency</code></td><td>Cancel/queue overlapping runs per group</td><td>— (custom) </td></tr>
+    <tr><td>artifacts</td><td>Pass files between jobs</td><td>Publish/download artifacts</td></tr>
+    <tr><td><code>$GITHUB_OUTPUT</code></td><td>Pass values between steps</td><td>SetOutputVariables</td></tr>
+  </table>
+</section>
+
+</main>
+<footer>© Stalwart Learning · Confidential · Module 03 of 05 · Source: course outline Session 1 · For training use only.</footer>
+
+<script>
+/* ---- DAG simulator ---- */
+const DAG = [
+  {id:'lint',  deps:[],  dur:2000},
+  {id:'test',  deps:['lint'], dur:3000, mx:3},
+  {id:'build', deps:['lint'], dur:2500},
+  {id:'docker',deps:['test','build'], dur:2000},
+  {id:'deploy',deps:['docker'], dur:2500}
+];
+const gantt = document.getElementById('gantt');
+const timeline = document.getElementById('timeline');
+let state = {}, timer = null, t0 = 0, running = false;
+
+function resetSim(){
+  if(timer){ clearInterval(timer); timer=null; }
+  running=false; state={};
+  gantt.innerHTML=''; timeline.textContent='';
+  DAG.forEach(j=>{
+    const job = state[j.id] = {st:'idle', start:0, dur:j.dur, finished:false};
+    gantt.insertAdjacentHTML('beforeend',
+      '<div class="grow" data-id="'+j.id+'"><div class="lbl">'+j.id+'</div><div class="track"><div class="bar"></div></div></div>');
+  });
+}
+function setBar(id, cls, widthPct){
+  const bar = gantt.querySelector('[data-id="'+id+'"] .bar');
+  bar.classList.remove('run','done','fail','queued');
+  if(cls) bar.classList.add(cls);
+  if(widthPct!=null) bar.style.width = widthPct+'%';
+}
+function tick(){
+  const now = Date.now()-t0;
+  let allDone = true;
+  DAG.forEach(j=>{
+    const job = state[j.id];
+    if(job.st==='idle'){
+      const anyBad = j.deps.some(d=>state[d].st==='failed' || state[d].st==='skipped');
+      const depsOk = j.deps.every(d=>state[d].st==='done');
+      if(anyBad){ job.st='skipped'; setBar(j.id,'queued',100); }
+      else if(depsOk){ job.st='run'; job.start=now; }
+    }
+    if(job.st==='run'){
+      const pct = Math.min(100, ((now-job.start)/job.dur)*100);
+      setBar(j.id, 'run', pct);
+      if(now - job.start >= job.dur){ job.st='done'; setBar(j.id,'done',100); }
+    }
+    if(job.st!=='done' && job.st!=='skipped') allDone=false;
+  });
+  timeline.textContent = 'elapsed: '+Math.round(now/1000)+'s · click a running (blue) bar to fail it';
+  if(allDone && running){ running=false; clearInterval(timer);
+    const fail = DAG.some(j=>state[j.id].st==='failed');
+    timeline.textContent = fail ? 'Run failed — downstream jobs are skipped (status functions in §3.2 decide fallback).' : 'Run succeeded. Total time = longest dependency chain (critical path), not the sum.';
+  }
+}
+gantt.addEventListener('click', e=>{
+  const row = e.target.closest('.grow'); if(!row) return;
+  const job = state[row.dataset.id];
+  if(job.st==='run'){
+    job.st='failed'; running=false;
+    setBar(row.dataset.id,'fail',100);
+    if(timer){ clearInterval(timer); }
+    tick(); // cascade skips to everything that needs it
+    timeline.textContent = row.dataset.id+' failed — all jobs that need it are skipped.';
+  }
+});
+document.getElementById('run-sim').addEventListener('click', ()=>{
+  resetSim(); running=true; t0=Date.now(); tick(); timer=setInterval(tick, 80);
+});
+document.getElementById('reset-sim').addEventListener('click', resetSim);
+resetSim();
+
+/* ---- if explorer ---- */
+const ifsel = document.getElementById('ifsel');
+const ifcustom = document.getElementById('ifcustom');
+const ifverdict = document.getElementById('ifverdict');
+ifsel.addEventListener('change', ()=>{
+  ifcustom.style.display = ifsel.value==='custom'?'':'none';
+  if(ifsel.value==='custom' && ifcustom.value){ updateVerdict(ifcustom.value); }
+});
+ifcustom.addEventListener('input', ()=>updateVerdict(ifcustom.value));
+function updateVerdict(expr){
+  const f = new Function('github','return Boolean('+expr+');');
+  let ok=true, err=null;
+  try{ f({event_name:'push', ref:'refs/heads/main'}); }catch(e){ ok=false; err=e.message; }
+  if(!ok){ ifverdict.className='verdict f'; ifverdict.textContent = '⚠ expression error — check contexts & types'; return; }
+  const sample = f({event_name:'push', ref:'refs/heads/main'});
+  ifverdict.className='verdict '+(sample?'t':'f');
+  ifverdict.textContent = 'sample evaluation → '+(sample?'true (step runs)':'false (step skipped)');
+}
+updateVerdict("github.event_name == 'push'");
+
+/* ---- matrix builder ---- */
+const mxBoxes = Array.from(document.querySelectorAll('#mx-checkboxes input'));
+const mxYaml = document.getElementById('mx-yaml');
+const mxCells = document.getElementById('mx-cells');
+function renderMatrix(){
+  const nodes = mxBoxes.filter(b=>b.dataset.v).filter(b=>b.checked).map(b=>b.dataset.v);
+  const oss   = mxBoxes.filter(b=>b.dataset.o).filter(b=>b.checked).map(b=>b.dataset.o);
+  if(!nodes.length || !oss.length){
+    mxYaml.textContent = 'Select at least one Node version and one OS.';
+    mxCells.innerHTML=''; return;
+  }
+  mxYaml.textContent = `jobs:
+  test:
+    runs-on: \${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [${nodes.join(', ')}]
+        os: [${oss.join(', ')}]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: \${{ matrix.node }} }
+      - run: npm ci && npm test`;
+  mxCells.innerHTML = nodes.map(n=>oss.map(o=>{
+    const idx = nodes.indexOf(n)*oss.length + oss.indexOf(o);
+    return '<div class="mxcell"><b>'+n+' · '+o+'</b><br>job '+idx+' — runs in parallel</div>';
+  }).join('')).join('');
+}
+mxBoxes.forEach(b=>b.addEventListener('change', renderMatrix));
+renderMatrix();
+</script>
+</body>
+</html>

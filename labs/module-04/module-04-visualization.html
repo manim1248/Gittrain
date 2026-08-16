@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 04 — Actions, Marketplace &amp; Reuse | Stalwart Learning</title>
+<style>
+:root{
+  --bg:#f6f8fa; --card:#ffffff; --line:#d0d7de; --text:#1f2328; --muted:#57606a;
+  --blue:#0969da; --purple:#8250df; --green:#1a7f37; --amber:#bf8700; --red:#cf222e;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--text); font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; padding-bottom:4rem}
+.conf{background:#1f2328; color:#ffdf5d; font:600 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; padding:.55rem 1.25rem}
+.topnav{display:flex; flex-wrap:wrap; gap:.35rem; align-items:center; background:var(--card); border-bottom:1px solid var(--line); padding:.5rem 1.25rem; position:sticky; top:0; z-index:50}
+.topnav .brand{font-weight:700; margin-right:.75rem; font-size:13px; color:var(--blue)}
+.topnav a{font-size:12px; color:var(--text); text-decoration:none; padding:.25rem .6rem; border-radius:999px; border:1px solid var(--line); background:#fff}
+.topnav a:hover{border-color:var(--blue); color:var(--blue)}
+.topnav a.here{background:var(--blue); color:#fff; border-color:var(--blue)}
+header{padding:1.75rem 1.25rem 1rem; max-width:1080px; margin:0 auto}
+header h1{font-size:1.7rem; line-height:1.2}
+header .sub{color:var(--muted); margin-top:.4rem}
+main{max-width:1080px; margin:0 auto; padding:0 1.25rem}
+section{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:1.4rem 1.5rem; margin-top:1.25rem}
+section h2{font-size:1.15rem; margin-bottom:.35rem; display:flex; align-items:center; gap:.5rem}
+section h2 .no{color:var(--blue); font-family:var(--mono); font-size:.85rem; background:#ddf4ff; padding:.15rem .5rem; border-radius:6px}
+section .lead{color:var(--muted); margin-bottom:1rem}
+h3{font-size:.95rem; margin:1rem 0 .5rem}
+button{font:inherit; cursor:pointer; border:1px solid var(--line); background:#fff; color:var(--text); border-radius:8px; padding:.45rem .85rem; transition:all .12s}
+button:hover{border-color:var(--blue); color:var(--blue)}
+button.primary{background:var(--blue); color:#fff; border-color:var(--blue)}
+button.primary:hover{filter:brightness(1.08); color:#fff}
+.chips{display:flex; flex-wrap:wrap; gap:.5rem; margin:.6rem 0}
+code,pre{font-family:var(--mono)}
+pre{background:#0d1117; color:#e6edf3; border-radius:10px; padding:1rem 1.1rem; overflow:auto; font-size:12.5px; line-height:1.6; margin:.6rem 0}
+pre .c{color:#8b949e}
+pre .hl2{background:rgba(255,223,93,.2); outline:1px solid #ffdf5d; border-radius:3px}
+.split{display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; margin-top:.6rem}
+@media(max-width:820px){.split{grid-template-columns:1fr}}
+.note{border:1px solid var(--amber); background:#fff8c5; border-radius:10px; padding:.8rem 1rem; font-size:.86rem; margin:.8rem 0}
+.pin{display:flex; flex-wrap:wrap; gap:.6rem; margin:.8rem 0}
+.pinopt{flex:1 1 200px; border:2px solid var(--line); border-radius:12px; padding:.9rem 1rem; cursor:pointer; background:#fff; transition:all .15s}
+.pinopt .pt{font-weight:700}
+.pinopt .pcode{font-family:var(--mono); font-size:.8rem; margin:.35rem 0; color:var(--blue)}
+.pinopt:hover{border-color:var(--blue)}
+.pinopt.sel{border-color:var(--blue); background:#ddf4ff}
+.meter{height:12px; background:#eaeef2; border-radius:999px; overflow:hidden; margin-top:.4rem}
+.meter i{display:block; height:100%; background:var(--green); width:0; transition:width .4s}
+.pinout{border:1px solid var(--line); border-left:4px solid var(--blue); border-radius:10px; padding:1rem; background:#f6f8fa; min-height:120px}
+.pinout .poh{font-weight:700}
+.tabrow{display:flex; gap:.4rem; flex-wrap:wrap; margin:.6rem 0}
+.tab{font-size:.82rem}
+.tab.on{background:var(--purple); color:#fff; border-color:var(--purple)}
+table{border-collapse:collapse; width:100%; font-size:.86rem; margin:.6rem 0}
+th,td{border:1px solid var(--line); padding:.5rem .7rem; text-align:left; vertical-align:top}
+th{background:#f6f8fa; font-size:.78rem; text-transform:uppercase; letter-spacing:.04em}
+.check{display:flex; gap:.55rem; align-items:flex-start; margin:.45rem 0; font-size:.9rem; cursor:pointer}
+.check input{width:16px; height:16px; margin-top:.2rem}
+.score{font-size:1.1rem; font-weight:700; font-family:var(--mono)}
+.score.good{color:var(--green)} .score.mid{color:var(--amber)} .score.bad{color:var(--red)}
+footer{max-width:1080px; margin:2rem auto 0; padding:1rem 1.25rem 0; color:var(--muted); font-size:.8rem; border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="conf">Confidential · Stalwart Learning — Module 04 · Actions, Marketplace &amp; Reuse</div>
+<nav class="topnav">
+  <span class="brand">Session 1 · Core Concepts</span>
+  <a href="../module-01/module-01-visualization.html">01 Architecture</a>
+  <a href="../module-02/module-02-visualization.html">02 Events &amp; Triggers</a>
+  <a href="../module-03/module-03-visualization.html">03 Jobs &amp; Control</a>
+  <a class="here" href="module-04-visualization.html">04 Actions &amp; Reuse</a>
+  <a href="../module-05/module-05-visualization.html">05 Copilot</a>
+</nav>
+<header>
+  <h1>Actions, Marketplace &amp; Reuse — consume safely, share smartly</h1>
+  <p class="sub">Three interactive tools: pinning policy, the composite-vs-reusable decision, and a supply-chain scorecard. Companion to <code>guides/module-04-actions-marketplace-reuse.md</code>.</p>
+</header>
+<main>
+
+<section>
+  <h2><span class="no">4.1</span> Pinning policy — how should I reference an action?</h2>
+  <p class="lead">Every action you pin is third-party code that runs inside your CI. Your choice of <code>@ref</code> is a security decision, not a style choice.</p>
+  <div class="pin" id="pinopts">
+    <div class="pinopt" data-p="sha"><div class="pt">Full commit SHA</div><div class="pcode">uses: actions/checkout@dcd71f6466…</div><div class="meter"><i></i></div></div>
+    <div class="pinopt" data-p="tag"><div class="pt">Major version tag</div><div class="pcode">uses: actions/checkout@v4</div><div class="meter"><i></i></div></div>
+    <div class="pinopt" data-p="branch"><div class="pt">Floating tag / branch</div><div class="pcode">uses: some-user/some-action@main</div><div class="meter"><i></i></div></div>
+  </div>
+  <div class="pinout" id="pinout"></div>
+  <div class="note"><b>Recommended policy:</b> pin third-party actions by <b>full SHA</b>, with the tag in a comment (<code># v4.x.y</code>). Let <b>Dependabot</b> keep the pins current. Treat floating refs as the exception for trusted first-party actions only — and never on branches.</div>
+</section>
+
+<section>
+  <h2><span class="no">4.2</span> Composite action vs reusable workflow — which do I need?</h2>
+  <p class="lead">Both share work; they share different things. Answer the question, then compare.</p>
+  <div class="chips">
+    <button id="q-share" class="primary">What do I want to share?</button>
+  </div>
+  <div class="tabrow" id="r-tabs" style="display:none">
+    <button class="tab on" data-r="composite">Composite action</button>
+    <button class="tab" data-r="rw">Reusable workflow</button>
+  </div>
+  <div id="r-detail"></div>
+</section>
+
+<section>
+  <h2><span class="no">4.3</span> Supply-chain scorecard</h2>
+  <p class="lead">Tick what your workflow already does — see a readiness score. Aim for the green zone before any production adoption.</p>
+  <div id="checks">
+    <label class="check"><input type="checkbox" data-w="20"> Third-party actions pinned by commit SHA</label>
+    <label class="check"><input type="checkbox" data-w="15"> Tag listed in a comment next to each SHA</label>
+    <label class="check"><input type="checkbox" data-w="15"> Dependabot (or Renovate) updating action pins</label>
+    <label class="check"><input type="checkbox" data-w="15"> Only verified / trusted publishers used</label>
+    <label class="check"><input type="checkbox" data-w="15"> Least-privilege <code>permissions:</code> block on every workflow</label>
+    <label class="check"><input type="checkbox" data-w="10"> New actions audited (action.yml, package.json, stars, maintainers) before adoption</label>
+    <label class="check"><input type="checkbox" data-w="10"> <code>secrets: inherit</code> avoided / scoped explicitly on reusable workflows</label>
+  </div>
+  <p style="margin-top:.6rem">Score: <span class="score" id="score">0 / 100</span></p>
+</section>
+
+<section>
+  <h2><span class="no">4.4</span> Reference table</h2>
+  <table>
+    <tr><th></th><th>Composite action</th><th>Reusable workflow</th></tr>
+    <tr><td>Shares</td><td>Steps (a recipe)</td><td>Jobs (a whole workflow)</td></tr>
+    <tr><td>Declared</td><td><code>runs.using: composite</code></td><td><code>on: workflow_call</code></td></tr>
+    <tr><td>Called via</td><td><code>uses: ./actions/…</code> or <code>owner/repo@ref</code></td><td><code>uses: owner/repo/.github/workflows/x.yml@ref</code></td></tr>
+    <tr><td>Secrets</td><td>Via its own inputs/env</td><td>Explicit <code>secrets:</code> or <code>secrets: inherit</code></td></tr>
+    <tr><td>Typical use</td><td>Repeated step-group in your workflows</td><td>One standard CI/CD pipeline reused across all microservice repos (Session 2, Module 10)</td></tr>
+  </table>
+  <div class="note"><b>Gotcha:</b> composite actions need an explicit <code>shell:</code> on every <code>run:</code> step, and can't use top-level <code>if:</code>/<code>env:</code>. Reusable workflows are a fixed contract — version by ref, don't try to override the callee.</div>
+</section>
+
+</main>
+<footer>© Stalwart Learning · Confidential · Module 04 of 05 · Source: course outline Session 1 · For training use only.</footer>
+
+<script>
+/* ---- pinning ---- */
+const PINS = {
+  sha:  {h:'Pin by full commit SHA', lv:100, pros:['Immutable — the ref can never be re-pointed','Tamper-proof: what you audited is what runs','Dependabot keeps it current for you'], cons:['Noisy diff to read — keep the tag in a comment','Slightly harder to eyeball in review'], verdict:'Production default for anything third-party.'},
+  tag:  {h:'Pin a major version tag (@v4)', lv:60, pros:['Readable at a glance','Auto-updates within the major version (bugfixes)'], cons:['The tag can be force-moved by the publisher (supply-chain risk)','What you run today may differ from what you ran last week'], verdict:'Acceptable for trusted first-party actions; risky for unknown publishers.'},
+  branch:{h:'Floating tag / branch (@main)', lv:20, pros:['Always "latest" — zero maintenance'], cons:['Publisher can change the code at any time','No audit trail — runs arbitrary code on every execution','The worst choice for anything touching prod'], verdict:'Avoid. It turns your CI into a remote-code-execution surface.'}
+};
+const pinEls = Array.from(document.querySelectorAll('.pinopt'));
+const pinout = document.getElementById('pinout');
+function showPin(k){
+  pinEls.forEach(el=>{ el.classList.toggle('sel', el.dataset.p===k); el.querySelector('.meter i').style.width = PINS[k].lv+'%'; });
+  const p = PINS[k];
+  pinout.innerHTML = '<div class="poh">'+p.h+' — security '+p.lv+'/100</div>'+
+    '<div class="split"><div><b style="font-size:.8rem; color:var(--green)">PROS</b><ul style="margin:.3rem 0 .3rem 1.2rem; font-size:.85rem">'+p.pros.map(x=>'<li>'+x+'</li>').join('')+'</ul></div>'+
+    '<div><b style="font-size:.8rem; color:var(--red)">CONS</b><ul style="margin:.3rem 0 .3rem 1.2rem; font-size:.85rem">'+p.cons.map(x=>'<li>'+x+'</li>').join('')+'</ul></div></div>'+
+    '<div class="note" style="margin-top:.7rem; margin-bottom:0">'+p.verdict+'</div>';
+}
+pinEls.forEach(el=>el.addEventListener('click', ()=>showPin(el.dataset.p)));
+showPin('sha');
+
+/* ---- composite vs reusable ---- */
+const REUSE = {
+  composite:{ yaml:`# actions/build-push/action.yml
+name: Build & Push
+description: Build the image and push it
+inputs:
+  image-name:
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+    - run: docker build -t \${{ inputs.image-name }} .
+      shell: bash        # ← required in composites
+    - run: docker push \${{ inputs.image-name }}
+      shell: bash`,
+    good:'Share a fixed sequence of steps — the same recipe used in several workflows or jobs.',
+    ado:'≈ ADO task group.'},
+  rw:{ yaml:`# shared-workflows/.github/workflows/build-ci.yml
+name: Shared CI
+on:
+  workflow_call:
+    inputs:
+      node-version: { type: string, default: '20' }
+    secrets:
+      REGISTRY_PASSWORD: { required: false }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: \${{ inputs.node-version }} }
+      - run: npm ci && npm run build
+
+# caller, in each microservice repo
+jobs:
+  ci:
+    uses: your-org/shared-workflows/.github/workflows/build-ci.yml@main
+    with: { node-version: '22' }
+    secrets: inherit`,
+    good:'Standardise an entire pipeline (jobs, inputs, secrets) that many repos must call — e.g. one CI/CD contract for all your microservices.',
+    ado:'≈ ADO YAML templates (includes/extends).'}
+};
+const rTabs = document.getElementById('r-tabs');
+const rDetail = document.getElementById('r-detail');
+function showReuse(k){
+  rTabs.style.display='';
+  rTabs.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on', t.dataset.r===k));
+  const r = REUSE[k];
+  rDetail.innerHTML = '<h3>'+ (k==='composite'?'Composite action':'Reusable workflow') +'</h3><div class="split"><pre>'+r.yaml+'</pre><div><p>'+r.good+'</p><p class="note" style="margin-top:.6rem"><b>ADO:</b> '+r.ado+'</p></div></div>';
+}
+document.getElementById('q-share').addEventListener('click', ()=>{
+  rDetail.innerHTML = '';
+  const d = document.createElement('div');
+  d.className='note';
+  d.innerHTML = '<b>Decision helper:</b> sharing a <b>fixed sequence of steps</b> (checkout → install → lint) = <b>composite action</b>. Sharing a <b>whole pipeline with inputs &amp; secrets</b> that many repos call = <b>reusable workflow</b>. Tiny repeated logic? Just write a <code>run:</code> step — don\'t over-abstract.';
+  rDetail.appendChild(d);
+  showReuse('composite');
+});
+rTabs.addEventListener('click', e=>{ const b=e.target.closest('.tab'); if(b) showReuse(b.dataset.r); });
+
+/* ---- scorecard ---- */
+const scoreEl = document.getElementById('score');
+const checks = Array.from(document.querySelectorAll('#checks input'));
+function recompute(){
+  const total = checks.reduce((s,c)=> s + (c.checked? +c.dataset.w : 0), 0);
+  scoreEl.textContent = total + ' / 100';
+  scoreEl.className = 'score ' + (total>=80?'good': total>=50?'mid':'bad');
+}
+checks.forEach(c=>c.addEventListener('change', recompute));
+recompute();
+</script>
+</body>
+</html>
