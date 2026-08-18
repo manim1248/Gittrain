@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 09 — Container Build Pipelines | Stalwart Learning</title>
+<style>
+:root{
+  --bg:#f6f8fa; --card:#ffffff; --line:#d0d7de; --text:#1f2328; --muted:#57606a;
+  --blue:#0969da; --purple:#8250df; --green:#1a7f37; --amber:#bf8700; --red:#cf222e;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--text); font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; padding-bottom:4rem}
+.conf{background:#1f2328; color:#ffdf5d; font:600 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; padding:.55rem 1.25rem}
+.topnav{display:flex; flex-wrap:wrap; gap:.35rem; align-items:center; background:var(--card); border-bottom:1px solid var(--line); padding:.5rem 1.25rem; position:sticky; top:0; z-index:50}
+.topnav .brand{font-weight:700; margin-right:.75rem; font-size:13px; color:var(--blue)}
+.topnav a{font-size:12px; color:var(--text); text-decoration:none; padding:.25rem .6rem; border-radius:999px; border:1px solid var(--line); background:#fff}
+.topnav a:hover{border-color:var(--blue); color:var(--blue)}
+.topnav a.here{background:var(--blue); color:#fff; border-color:var(--blue)}
+header{padding:1.75rem 1.25rem 1rem; max-width:1080px; margin:0 auto}
+header h1{font-size:1.7rem; line-height:1.2}
+header .sub{color:var(--muted); margin-top:.4rem}
+main{max-width:1080px; margin:0 auto; padding:0 1.25rem}
+section{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:1.4rem 1.5rem; margin-top:1.25rem}
+section h2{font-size:1.15rem; margin-bottom:.35rem; display:flex; align-items:center; gap:.5rem; flex-wrap:wrap}
+section h2 .no{color:var(--blue); font-family:var(--mono); font-size:.85rem; background:#ddf4ff; padding:.15rem .5rem; border-radius:6px}
+section h2 .adolink{font-size:.75rem; color:var(--muted); font-weight:500}
+section .lead{color:var(--muted); margin-bottom:1rem}
+h3{font-size:.95rem; margin:1rem 0 .5rem; color:var(--text)}
+button{font:inherit; cursor:pointer; border:1px solid var(--line); background:#fff; color:var(--text); border-radius:8px; padding:.45rem .85rem; transition:all .12s}
+button:hover{border-color:var(--blue); color:var(--blue)}
+button:disabled{opacity:.45; cursor:default}
+button.primary{background:var(--blue); color:#fff; border-color:var(--blue)}
+button.primary:hover{filter:brightness(1.08); color:#fff}
+.chips{display:flex; flex-wrap:wrap; gap:.5rem; margin:.6rem 0}
+code,pre{font-family:var(--mono)}
+pre{background:#0d1117; color:#e6edf3; border-radius:10px; padding:1rem 1.1rem; overflow:auto; font-size:12.5px; line-height:1.55; margin:.6rem 0}
+pre .c{color:#8b949e}
+pre .k{color:#ff7b72}
+pre .s{color:#a5d6ff}
+pre .f{color:#d2a8ff}
+.hl{background:rgba(255,223,93,.25); outline:1px solid #ffdf5d; border-radius:3px}
+.flash{animation:fl .5s ease 2}
+@keyframes fl{0%{box-shadow:0 0 0 0 rgba(9,105,218,.55)}100%{box-shadow:0 0 0 12px rgba(9,105,218,0)}}
+.flow{display:flex; flex-wrap:wrap; align-items:stretch; gap:.6rem; margin:1rem 0}
+.node{flex:1 1 150px; border:2px solid var(--line); border-radius:12px; padding:.8rem .9rem; background:#fff; transition:all .2s}
+.node .t{font-weight:700; font-size:.9rem}
+.node .d{font-size:.78rem; color:var(--muted); margin-top:.2rem}
+.node.active{border-color:var(--blue); background:#ddf4ff; transform:translateY(-3px)}
+.node.done{border-color:var(--green); background:#dafbe1}
+.node.fail{border-color:var(--red); background:#ffebe9}
+.arrow{align-self:center; color:var(--muted); font-size:1.2rem}
+.log{background:#0d1117; color:#e6edf3; font:12px/1.7 var(--mono); border-radius:10px; padding:1rem; height:190px; overflow:auto; margin-top:.8rem}
+.log .ln{display:block; white-space:pre-wrap}
+.log .ok{color:#3fb950}.log .warn{color:#d29922}.log .info{color:#79c0ff}.log .dim{color:#8b949e}.log .err{color:#ff7b72}
+.split{display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; margin-top:.6rem}
+@media(max-width:820px){.split{grid-template-columns:1fr}}
+.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:.7rem; margin:.8rem 0}
+.stat{border:1px solid var(--line); border-radius:10px; padding:.75rem .9rem; background:#fff}
+.stat b{display:block; font-size:1.05rem}
+.stat span{font-size:.78rem; color:var(--muted)}
+.note{border:1px solid var(--amber); background:#fff8c5; border-radius:10px; padding:.8rem 1rem; font-size:.86rem; margin:.8rem 0}
+.oknote{border:1px solid var(--green); background:#dafbe1; border-radius:10px; padding:.8rem 1rem; font-size:.86rem; margin:.8rem 0}
+footer{max-width:1080px; margin:2rem auto 0; padding:0 1.25rem; color:var(--muted); font-size:.8rem; border-top:1px solid var(--line); padding-top:1rem}
+table{border-collapse:collapse; width:100%; font-size:.85rem; margin:.6rem 0}
+th,td{border:1px solid var(--line); padding:.45rem .6rem; text-align:left; vertical-align:top}
+th{background:#f6f8fa; font-weight:600}
+.tagline{font:12px var(--mono); border-radius:8px; padding:.55rem .8rem; margin:.35rem 0; background:#fff; border:1px solid var(--line)}
+.tagline b{color:var(--blue)}
+.tagline.good{border-color:var(--green); background:#dafbe1}
+.tagline.bad{border-color:var(--red); background:#ffebe9}
+.reflist{font:12px var(--mono); background:#0d1117; color:#e6edf3; border-radius:10px; padding:.9rem 1rem; margin:.5rem 0}
+.reflist .r{display:block; padding:.1rem 0}
+.reflist .r .tag{color:#a5d6ff}
+.reflist .r .hash{color:#8b949e}
+.tabrow{display:flex; gap:.4rem; flex-wrap:wrap; margin:.6rem 0}
+.tab{font-size:.82rem}
+.tab.on{background:var(--purple); color:#fff; border-color:var(--purple)}
+.registry{font:12px var(--mono); border:1px solid var(--line); border-radius:10px; padding:.7rem .9rem; background:#fff; margin:.5rem 0}
+.registry .rt{color:var(--blue); font-weight:700}
+.registry .rd{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="conf">Confidential · Stalwart Learning — Module 09 · Container Build Pipelines</div>
+<nav class="topnav">
+  <span class="brand">Session 2 · CI for Microservices</span>
+  <a href="../module-06/module-06-visualization.html">← 06 Variables &amp; Secrets</a>
+  <a href="../module-07/module-07-visualization.html">07 Multi-Service</a>
+  <a href="../module-08/module-08-visualization.html">08 Artifacts &amp; Cache</a>
+  <a class="here" href="module-09-visualization.html">09 Containers</a>
+  <a href="../module-10/module-10-visualization.html">10 Reusable Workflows</a>
+</nav>
+<header>
+  <h1>Container Build Pipelines — build, tag, authenticate, push</h1>
+  <p class="sub">Run the build→tag→login→push pipeline, choose a tagging strategy, and compare registry authentication approaches. Companion to <code>guides/module-09-container-build-pipelines.md</code>.</p>
+</header>
+<main>
+
+<section>
+  <h2><span class="no">9.1</span> The container pipeline — run it <span class="adolink">(ADO: Docker@2 task)</span></h2>
+  <p class="lead">The four stages every container workflow goes through. Run the simulation, then read the exact YAML below.</p>
+  <div class="flow" id="c-flow">
+    <div class="node" id="c-build"><div class="t">1 · Build</div><div class="d">buildx · BuildKit · layer cache</div></div>
+    <div class="arrow">→</div>
+    <div class="node" id="c-tag"><div class="t">2 · Tag</div><div class="d">metadata-action → branch + sha tags</div></div>
+    <div class="arrow">→</div>
+    <div class="node" id="c-login"><div class="t">3 · Authenticate</div><div class="d">login-action · GHCR token</div></div>
+    <div class="arrow">→</div>
+    <div class="node" id="c-push"><div class="t">4 · Push</div><div class="d">build-push-action · push: true</div></div>
+  </div>
+  <div class="chips">
+    <button class="primary" id="run-container">Run pipeline</button>
+    <button id="reset-container">Reset</button>
+  </div>
+  <div class="log" id="clog"><span class="ln dim">— Console —</span></div>
+  <h3>What the YAML looks like (the 4-action pattern)</h3>
+  <pre><span class="c"># push to main → build, tag, push to GHCR</span>
+<span class="k">permissions:</span>
+  <span class="f">contents: read</span>
+  <span class="f">packages: write</span>          <span class="c"># ← required for GHCR</span>
+<span class="k">steps:</span>
+  - <span class="k">uses:</span> actions/checkout@v4
+  - <span class="k">uses:</span> docker/setup-buildx-action@v3
+  - <span class="k">uses:</span> docker/login-action@v3
+    <span class="k">with:</span>
+      <span class="f">registry:</span> ghcr.io
+      <span class="f">username:</span> ${{ github.actor }}
+      <span class="f">password:</span> ${{ secrets.GITHUB_TOKEN }}
+  - <span class="k">uses:</span> docker/metadata-action@v5
+    <span class="k">id:</span> meta
+    <span class="k">with:</span>
+      <span class="f">images:</span> ${{ vars.IMAGE_REGISTRY }}/${{ github.repository }}
+      <span class="f">tags:</span> |
+        type=ref,event=branch
+        type=sha,format=short
+  - <span class="k">uses:</span> docker/build-push-action@v6
+    <span class="k">with:</span>
+      <span class="f">context:</span> services/checkout
+      <span class="f">file:</span> services/checkout/Dockerfile
+      <span class="f">push:</span> true
+      <span class="f">tags:</span> ${{ steps.meta.outputs.tags }}
+      <span class="f">cache-from:</span> type=gha
+      <span class="f">cache-to:</span> type=gha,mode=max</pre>
+</section>
+
+<section>
+  <h2><span class="no">9.2</span> Tagging strategy — choose your tags <span class="adolink">(ADO: Build.BuildNumber-based tags)</span></h2>
+  <p class="lead">Good tags are <b>immutable and traceable</b> — you must always know which commit an image came from. Toggle tag types and watch the generated image references.</p>
+  <div class="chips" id="tag-chips">
+    <button class="primary" data-t="sha">type=sha</button>
+    <button class="primary" data-t="branch">type=ref,event=branch</button>
+    <button class="primary" data-t="semver">type=semver</button>
+    <button data-t="latest">type=raw,value=latest</button>
+  </div>
+  <div class="split">
+    <div>
+      <h3>Generated image references</h3>
+      <div class="reflist" id="reflist"></div>
+    </div>
+    <div>
+      <h3>What you get</h3>
+      <div id="tag-detail"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">9.3</span> Registry authentication — three approaches <span class="adolink">(ADO: service connections)</span></h2>
+  <p class="lead">Credential strategy drives how much secret management you do. Overview here — the OIDC deep-dive is Session 3, Module 12.</p>
+  <div class="tabrow" id="auth-tabs">
+    <button class="tab on" data-a="secret">1 · Secret login (ACR)</button>
+    <button class="tab" data-a="ghcr">2 · GHCR + GITHUB_TOKEN</button>
+    <button class="tab" data-a="oidc">3 · OIDC (Session 3)</button>
+  </div>
+  <div id="auth-detail"></div>
+</section>
+
+<section>
+  <h2><span class="no">9.4</span> Hand-off to GitOps — where Actions' job ends <span class="adolink">(Flux takes over; out of scope)</span></h2>
+  <div class="flow" id="handoff-flow">
+    <div class="node" id="h-build"><div class="t">GitHub Actions</div><div class="d">build → tag → push image</div></div>
+    <div class="arrow">→</div>
+    <div class="node" id="h-update"><div class="t">Update manifest ref</div><div class="d">services/checkout/deploy/base/image</div></div>
+    <div class="arrow">→</div>
+    <div class="node" id="h-flux"><div class="t">Flux (GitOps)</div><div class="d">reconciles AKS — out of scope</div></div>
+  </div>
+  <div class="note"><b>Boundary reminder:</b> this course's scope ends at the manifest reference update. Do <b>not</b> have Actions <code>kubectl apply</code> directly — that bypasses your GitOps model. With sha-based tags, every push produces a unique immutable reference Flux can reconcile and you can roll back.</div>
+</section>
+
+</main>
+<footer>© Stalwart Learning · Confidential · Module 09 of 10 · Source: course outline Session 2 · For training use only.</footer>
+
+<script>
+/* 9.1 — pipeline sim */
+const cNodes = {build:document.getElementById('c-build'), tag:document.getElementById('c-tag'), login:document.getElementById('c-login'), push:document.getElementById('c-push')};
+const clog = document.getElementById('clog');
+function cl(msg, cls='info'){
+  const s=document.createElement('span'); s.className='ln '+cls; s.textContent=msg;
+  clog.appendChild(s); clog.scrollTop=clog.scrollHeight;
+}
+function markC(k, cls){
+  Object.values(cNodes).forEach(n=>{n.classList.remove('active','done');});
+  cNodes[k].classList.add(cls);
+}
+document.getElementById('run-container').addEventListener('click', ()=>{
+  clog.innerHTML=''; let t=0;
+  const step=(fn,ms)=>{t+=ms; setTimeout(fn,t);};
+  step(()=>{ cl('Event: push to main → workflow starts','info'); markC('build','active'); }, 200);
+  step(()=>{ cl('  setup-buildx → BuildKit ready','dim'); }, 600);
+  step(()=>{ cl('  build-push-action: building services/checkout …','warn'); }, 700);
+  step(()=>{ cl('  → 8 layers built (5 from cache — type=gha)','ok'); markC('build','done'); markC('tag','active'); }, 800);
+  step(()=>{ cl('  metadata-action: emitted tags [main, sha-3f9ab2c]','ok'); markC('tag','done'); markC('login','active'); }, 700);
+  step(()=>{ cl('  login-action: ghcr.io as sara-devops (GITHUB_TOKEN)','dim'); markC('login','done'); markC('push','active'); }, 700);
+  step(()=>{ cl('  PUSHING ghcr.io/…/checkout-service:main …','warn'); }, 600);
+  step(()=>{ cl('  PUSHING ghcr.io/…/checkout-service:sha-3f9ab2c …','warn'); }, 600);
+  step(()=>{ cl('  ✓ image pushed (2 tags)','ok'); markC('push','done'); }, 600);
+  step(()=>{ cl('  → Flux hand-off: bump manifest image ref (Session 3)','dim'); }, 500);
+});
+document.getElementById('reset-container').addEventListener('click', ()=>{
+  Object.values(cNodes).forEach(n=>n.classList.remove('active','done'));
+  clog.innerHTML='<span class="ln dim">— Console —</span>';
+});
+
+/* 9.2 — tags */
+const TAG_DETAIL = {
+  sha:    '<div class="tagline good"><b>type=sha,format=short</b> → sha-3f9ab2c</div><p>Immutable, unique per commit. The traceability backbone — every push yields a reference Flux can reconcile and you can roll back.</p>',
+  branch: '<div class="tagline good"><b>type=ref,event=branch</b> → main</div><p>Simple "what\'s current" pointer. Fine for the latest state, but not a deployment target — it moves.</p>',
+  semver: '<div class="tagline good"><b>type=semver,pattern={{version}}</b> → v1.2.3</div><p>Emitted only on tag pushes. Matches release cadence and how Flux/Helm consume versions.</p>',
+  latest: '<div class="tagline bad"><b>type=raw,value=latest</b> → latest</div><p>Convenience only. Non-immutable — as a deployment target it makes diffing and rollback ambiguous. Avoid in production pipelines.</p>'
+};
+let tagsOn = ['sha','branch','semver'];
+const refs = {
+  sha:    ['ghcr.io/stalwart-learning/checkout-service:<span class="tag">sha-3f9ab2c</span>','<span class="hash">← commit 3f9ab2c</span>'],
+  branch: ['ghcr.io/stalwart-learning/checkout-service:<span class="tag">main</span>','<span class="hash">← branch ref</span>'],
+  semver: ['ghcr.io/stalwart-learning/checkout-service:<span class="tag">v1.2.3</span>','<span class="hash">← tag push v1.2.3</span>'],
+  latest: ['ghcr.io/stalwart-learning/checkout-service:<span class="tag">latest</span>','<span class="hash">← mutable, avoid</span>']
+};
+function renderTags(){
+  const list = document.getElementById('reflist');
+  list.innerHTML = '';
+  tagsOn.forEach(t=>{
+    const [ref, note] = refs[t];
+    const d = document.createElement('span'); d.className='r'; d.innerHTML = ref + ' ' + note;
+    list.appendChild(d);
+  });
+  if(!tagsOn.length) list.innerHTML = '<span class="r dim">(no tags — push would be empty)</span>';
+  document.getElementById('tag-detail').innerHTML = tagsOn.map(t=>TAG_DETAIL[t]).join('<div style="height:.8rem"></div>');
+}
+document.getElementById('tag-chips').addEventListener('click', e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  const t = b.dataset.t;
+  if(tagsOn.includes(t)){ tagsOn = tagsOn.filter(x=>x!==t); b.classList.remove('primary'); }
+  else { tagsOn.push(t); b.classList.add('primary'); }
+  renderTags();
+});
+renderTags();
+
+/* 9.3 — auth */
+const AUTH = {
+  secret: {yaml:`# Option 1 — password/token from a secret
+- uses: docker/login-action@v3
+  with:
+    registry: myacr.azurecr.io
+    username: \${{ secrets.ACR_USER }}
+    password: \${{ secrets.ACR_PASSWORD }}`,
+    d:'Direct and simple, but the credential is long-lived — rotation is manual. Fine for labs and low-risk private registries; migrate to OIDC for production (Module 12).',
+    ado:'≈ ADO ACR service connection with username/password.'},
+  ghcr: {yaml:`# Option 2 — GHCR uses the run-scoped token
+permissions:
+  packages: write
+- uses: docker/login-action@v3
+  with:
+    registry: ghcr.io
+    username: \${{ github.actor }}
+    password: \${{ secrets.GITHUB_TOKEN }}`,
+    d:'No long-lived secret stored: the auto-generated GITHUB_TOKEN is scoped to the run and auto-rotated. This is the default for images hosted on ghcr.io.',
+    ado:'≈ a scoped ADO token that expires; GitHub does it automatically.'},
+  oidc: {yaml:`# Option 3 — keyless OIDC (Session 3, Module 12)
+- uses: azure/login@v2
+  with:
+    client-id: \${{ vars.AZURE_CLIENT_ID }}
+    tenant-id: \${{ vars.AZURE_TENANT_ID }}
+    subscription-id: \${{ vars.AZURE_SUBSCRIPTION_ID }}
+- uses: azure/acr-login@v1
+  with:
+    username: \${{ steps.azure-login.outputs.username }}
+    password: \${{ steps.azure-login.outputs.password }}
+- uses: docker/build-push-action@v6
+  with:
+    push: true`,
+    d:'GitHub exchanges a short-lived OIDC token for an Azure credential — no secret at all. Rotates automatically. This is the recommended production approach for ACR pushes.',
+    ado:'≈ ADO Workload Identity federation.'}
+};
+const authTabs = document.getElementById('auth-tabs');
+function showAuth(k){
+  authTabs.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on', t.dataset.a===k));
+  const a = AUTH[k];
+  document.getElementById('auth-detail').innerHTML =
+    '<div class="split"><pre>' + a.yaml + '</pre>' +
+    '<div><p>' + a.d + '</p><p class="note" style="margin-top:.6rem"><b>ADO:</b> ' + a.ado + '</p></div></div>';
+}
+authTabs.addEventListener('click', e=>{ const b=e.target.closest('.tab'); if(b) showAuth(b.dataset.a); });
+showAuth('secret');
+</script>
+</body>
+</html>
