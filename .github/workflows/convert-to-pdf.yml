@@ -3,29 +3,26 @@ name: Convert Markdown to PDF
 on:
   push:
     branches:
-      - main  # Change to 'master' if your default branch is master
+      - main
     paths:
-      - '**/*.md'   # Matches any .md file in any subfolder (e.g., folder/subfolder/file.md)
+      - '**/*.md'
 
 jobs:
   build-pdf:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout the repository code
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Generate PDFs from all Markdown files across all paths
       - name: Generate PDFs from Markdown
         uses: baileyjm02/markdown-to-pdf@v1
         with:
-          input_path: .           # Scans the root and all subdirectories recursively
-          output_dir: pdf-output  # Folder where generated PDFs will be bundled
-          table_of_contents: true # Optional: generates a TOC
+          input_path: .
+          output_dir: ./pdf-output   # Added ./ to explicitly keep it inside the workspace
+          table_of_contents: true
 
-      # Step 3: Upload the generated PDFs as artifacts for download
       - name: Upload PDF Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: markdown-pdfs
-          path: pdf-output/*.pdf
+          path: ./pdf-output/*.pdf
