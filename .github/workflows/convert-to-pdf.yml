@@ -14,16 +14,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Generate PDFs from Markdown
-        uses: baileyjm02/markdown-to-pdf@v1
+      # Using a reliable Node-based action instead of Docker
+      - name: Convert Markdown to PDF
+        uses: bitovi/github-actions-markdown-to-pdf@v1.3.0
         with:
-          input_path: '.'
-          output_dir: 'pdf-output'
-          table_of_contents: true
+          path: .
+          output_dir: pdf-output
 
       - name: Upload PDF Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: markdown-pdfs
-          path: pdf-output/
-          if-no-files-found: error
+          path: pdf-output/*.pdf
