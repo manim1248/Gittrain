@@ -14,12 +14,24 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Using a reliable Node-based action instead of Docker
-      - name: Convert Markdown to PDF
-        uses: bitovi/github-actions-markdown-to-pdf@v1.3.0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          path: .
-          output_dir: pdf-output
+          node-version: '20'
+
+      - name: Install md-to-pdf tool
+        run: npm install -g md-to-pdf
+
+      - name: Convert all Markdown files to PDF
+        run: |
+          mkdir -p pdf-output
+          # Find and convert all markdown files recursively, placing them in pdf-output
+          find . -name "*.md" -not -path "*/.*" | while read file; do
+            echo "Converting $file..."
+            md-to-pdf "$file" --config-file || true
+          done
+          # Move generated PDFs into the output folder
+          mv *.pdf pdf-output/ 2>/dev/null || true
 
       - name: Upload PDF Artifacts
         uses: actions/upload-artifact@v4
