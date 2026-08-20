@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 17 — Troubleshooting with GitHub Copilot | Stalwart Learning</title>
+<style>
+:root{
+  --bg:#f6f8fa; --card:#ffffff; --line:#d0d7de; --text:#1f2328; --muted:#57606a;
+  --blue:#0969da; --purple:#8250df; --green:#1a7f37; --amber:#bf8700; --red:#cf222e;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+body{background:var(--bg); color:var(--text); font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; padding-bottom:4rem}
+.conf{background:#1f2328; color:#ffdf5d; font:600 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; padding:.55rem 1.25rem}
+.topnav{display:flex; flex-wrap:wrap; gap:.35rem; align-items:center; background:var(--card); border-bottom:1px solid var(--line); padding:.5rem 1.25rem; position:sticky; top:0; z-index:50}
+.topnav .brand{font-weight:700; margin-right:.75rem; font-size:13px; color:var(--blue)}
+.topnav a{font-size:12px; color:var(--text); text-decoration:none; padding:.25rem .6rem; border-radius:999px; border:1px solid var(--line); background:#fff}
+.topnav a:hover{border-color:var(--blue); color:var(--blue)}
+.topnav a.here{background:var(--blue); color:#fff; border-color:var(--blue)}
+header{padding:1.75rem 1.25rem 1rem; max-width:1080px; margin:0 auto}
+header h1{font-size:1.7rem; line-height:1.2}
+header .sub{color:var(--muted); margin-top:.4rem}
+main{max-width:1080px; margin:0 auto; padding:0 1.25rem}
+section{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:1.4rem 1.5rem; margin-top:1.25rem}
+section h2{font-size:1.15rem; margin-bottom:.35rem; display:flex; align-items:center; gap:.5rem; flex-wrap:wrap}
+section h2 .no{color:var(--blue); font-family:var(--mono); font-size:.85rem; background:#ddf4ff; padding:.15rem .5rem; border-radius:6px}
+section h2 .adolink{font-size:.75rem; color:var(--muted); font-weight:500}
+section .lead{color:var(--muted); margin-bottom:1rem}
+h3{font-size:.95rem; margin:1rem 0 .5rem; color:var(--text)}
+button{font:inherit; cursor:pointer; border:1px solid var(--line); background:#fff; color:var(--text); border-radius:8px; padding:.45rem .85rem; transition:all .12s}
+button:hover{border-color:var(--blue); color:var(--blue)}
+button:disabled{opacity:.45; cursor:default}
+button.primary{background:var(--blue); color:#fff; border-color:var(--blue)}
+button.primary:hover{filter:brightness(1.08); color:#fff}
+.chips{display:flex; flex-wrap:wrap; gap:.5rem; margin:.6rem 0}
+code,pre{font-family:var(--mono)}
+pre{background:#0d1117; color:#e6edf3; border-radius:10px; padding:1rem 1.1rem; overflow:auto; font-size:12.5px; line-height:1.55; margin:.6rem 0}
+.explain{border:1px solid var(--line); border-left:4px solid var(--blue); border-radius:10px; padding:1rem; background:#f6f8fa; font-size:.9rem}
+.split{display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; margin-top:.6rem}
+@media(max-width:820px){.split{grid-template-columns:1fr}}
+.note{border:1px solid var(--amber); background:#fff8c5; border-radius:10px; padding:.8rem 1rem; font-size:.86rem; margin:.8rem 0}
+.oknote{border:1px solid var(--green); background:#dafbe1; border-radius:10px; padding:.8rem 1rem; font-size:.86rem; margin:.8rem 0}
+.failnote{border:1px solid var(--red); background:#ffebe9; border-radius:10px; padding:.8rem 1rem; font-size:.86rem; margin:.8rem 0}
+footer{max-width:1080px; margin:2rem auto 0; padding:0 1.25rem; color:var(--muted); font-size:.8rem; border-top:1px solid var(--line); padding-top:1rem}
+table{border-collapse:collapse; width:100%; font-size:.85rem; margin:.6rem 0}
+th,td{border:1px solid var(--line); padding:.45rem .6rem; text-align:left; vertical-align:top}
+th{background:#f6f8fa; font-weight:600}
+.circle{display:flex; flex-direction:column; gap:.6rem; margin:.8rem 0}
+.circ{border:2px solid var(--line); border-radius:12px; padding:.85rem 1rem; background:#fff; cursor:pointer; transition:all .15s}
+.circ:hover{border-color:var(--blue)}
+.circ.sel{border-color:var(--green); background:#dafbe1}
+.circ .ct{font-weight:700}
+.circ .cd{font-size:.8rem; color:var(--muted); margin-top:.2rem}
+.log{background:#0d1117; color:#e6edf3; font:12px/1.7 var(--mono); border-radius:10px; padding:1rem; height:220px; overflow:auto; margin-top:.8rem}
+.log .ln{display:block; white-space:pre-wrap}
+.log .err{background:#ffebe9; color:#cf222e; outline:1px solid var(--red); border-radius:3px}
+.log .dim{color:#8b949e}
+.log .ok{color:#3fb950}
+.flow{display:flex; flex-wrap:wrap; gap:.6rem; align-items:stretch; justify-content:center; margin:1rem 0}
+.fstep{flex:1 1 160px; border:1px solid var(--line); border-radius:12px; padding:.8rem .9rem; background:#fff; text-align:center; position:relative}
+.fstep b{display:block; font-size:.85rem; color:var(--blue)}
+.fstep span{font-size:.74rem; color:var(--muted); display:block; margin-top:.2rem}
+.fstep::after{content:"→"; position:absolute; right:-1.1rem; top:50%; transform:translateY(-50%); color:var(--muted); font-weight:700}
+.fstep:last-child::after{content:""}
+.prompt{border:1px solid var(--line); border-left:4px solid var(--purple); border-radius:10px; padding:1rem; background:#fff; font-size:.9rem; margin:.6rem 0}
+.prompt b{color:var(--purple)}
+.symrow{display:flex; flex-wrap:wrap; gap:.5rem; margin:.6rem 0}
+.sym{flex:1 1 180px; border:1px solid var(--line); border-radius:10px; padding:.7rem .9rem; background:#fff; cursor:pointer; transition:all .15s}
+.sym:hover{border-color:var(--purple)}
+.sym.sel{border-color:var(--purple); background:#fbefff}
+.sym .st{font-weight:700; font-size:.85rem}
+.sym .sd{font-size:.76rem; color:var(--muted); margin-top:.15rem}
+</style>
+</head>
+<body>
+<div class="conf">Confidential · Stalwart Learning — Module 17 · Troubleshooting with GitHub Copilot</div>
+<nav class="topnav">
+  <span class="brand">Session 4 · Monitoring, Troubleshooting &amp; Applied Lab</span>
+  <a href="../module-16/module-16-visualization.html">16 Monitoring &amp; Debugging</a>
+  <a class="here" href="module-17-visualization.html">17 Copilot Troubleshooting</a>
+  <a href="../module-18/module-18-visualization.html">18 Advanced Authoring</a>
+  <a href="../module-19/module-19-visualization.html">19 E2E Lab</a>
+  <a href="../module-20/module-20-visualization.html">20 Migration &amp; Wrap-up</a>
+</nav>
+<header>
+  <h1>Troubleshooting with GitHub Copilot — from log to PR-ready fix</h1>
+  <p class="sub">Copilot reads the failure for you: diagnosis first, then a fix you review. Companion to <code>guides/module-17-troubleshooting-with-copilot.md</code>.</p>
+</header>
+<main>
+
+<section>
+  <h2><span class="no">17.1</span> The troubleshooting workflow <span class="adolink">(no ADO equivalent — this is a Copilot-native loop)</span></h2>
+  <p class="lead">The loop that turns a wall of text into a merged fix.</p>
+  <div class="flow">
+    <div class="fstep"><b>Identify</b><span>find failing run &amp; job (Module 16)</span></div>
+    <div class="fstep"><b>Copy log tail</b><span>failing step, last ~50 lines</span></div>
+    <div class="fstep"><b>Prompt Copilot</b><span>log + workflow file + repo context</span></div>
+    <div class="fstep"><b>Diagnosis</b><span>why did it fail — before any fix</span></div>
+    <div class="fstep"><b>Fix as diff</b><span>minimal, PR-ready YAML</span></div>
+    <div class="fstep"><b>Review &amp; verify</b><span>Module 15/13 guardrails, then re-run</span></div>
+  </div>
+  <div class="note"><b>The whole game is context.</b> A log alone is ambiguous; a log + workflow file + repo = a fix Copilot can be held accountable for. Copilot Chat can read files from the workspace — point it at <code>.github/workflows/</code>.</div>
+</section>
+
+<section>
+  <h2><span class="no">17.2</span> Log → diagnosis — pick a failure <span class="adolink">(watch the pattern match)</span></h2>
+  <p class="lead">Choose a log tail, then watch Copilot's style of answer: diagnosis first, root cause, then a fix you review.</p>
+  <div class="symrow" id="failures">
+    <div class="sym sel" data-f="oidc"><div class="st">Registry auth failure</div><div class="sd">azurecr.io unauthorized</div></div>
+    <div class="sym" data-f="cache"><div class="st">Cache miss / slow build</div><div class="sd">yarn/npm cache not hit</div></div>
+    <div class="sym" data-f="perm"><div class="st">Token permission error</div><div class="sd">"Resource not accessible"</div></div>
+  </div>
+  <div class="split">
+    <div>
+      <h3>Log tail (what you paste)</h3>
+      <div class="log" id="log-tail"></div>
+    </div>
+    <div>
+      <h3>Copilot response (what you review)</h3>
+      <div class="log" id="cop-out" style="height:220px"></div>
+    </div>
+  </div>
+  <div class="explain" id="diag-explain"></div>
+</section>
+
+<section>
+  <h2><span class="no">17.3</span> Build the prompt <span class="adolink">(the formula that produces good answers)</span></h2>
+  <p class="lead">Click the parts of a strong troubleshooting prompt and watch the assembled text.</p>
+  <div class="chips" id="prompt-chips">
+    <button class="primary" data-p="log">The failing log tail</button>
+    <button class="primary" data-p="wf">The workflow file</button>
+    <button class="primary" data-p="repo">Repo + service context</button>
+    <button class="primary" data-p="cons">Constraints (OIDC, registry, runner)</button>
+    <button class="primary" data-p="ask">Diagnose → fix → verify</button>
+  </div>
+  <pre id="prompt-out"></pre>
+  <div class="explain" id="prompt-explain"></div>
+</section>
+
+<section>
+  <h2><span class="no">17.4</span> Review the fix before merging <span class="adolink">(the Module 15 checklist, applied to AI output)</span></h2>
+  <p class="lead">Copilot proposes; a trained engineer disposes. Click each guardrail.</p>
+  <div class="circle" id="guard">
+    <div class="circ sel" data-g="perm"><div class="ct">Permissions unchanged?</div><div class="cd">still least-privilege, per-job</div></div>
+    <div class="circ" data-g="pin"><div class="ct">SHA pins intact?</div><div class="cd">no new tag-pinned <code>uses:</code></div></div>
+    <div class="circ" data-g="ptr"><div class="ct">No <code>pull_request_target</code>?</div><div class="cd">red flag if introduced</div></div>
+    <div class="circ" data-g="root"><div class="ct">Real root cause?</div><div class="cd">or a workaround that masks it</div></div>
+  </div>
+  <div class="explain" id="guard-explain"></div>
+  <div class="failnote"><b>Never paste secrets into the prompt.</b> Redact masked/sensitive values from the log before pasting — treat the chat transcript as a leak surface (Module 15).</div>
+</section>
+
+<section>
+  <h2><span class="no">17.5</span> Strengths &amp; limits <span class="adolink">(what to trust, what to escalate)</span></h2>
+  <div class="split">
+    <div>
+      <h3>Copilot is strong at</h3>
+      <ul style="margin:.5rem 0 0 1.2rem; font-size:.88rem">
+        <li>Explaining cryptic error text (exit codes, action errors)</li>
+        <li>Spotting YAML syntax / schema errors (indentation, bad keys)</li>
+        <li>Matching a log pattern to a known cause (auth, cache, timeout)</li>
+        <li>Suggesting the idiomatic action/pattern to replace a hack</li>
+        <li>Generating a diff you can review</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Not for / weak at</h3>
+      <ul style="margin:.5rem 0 0 1.2rem; font-size:.88rem">
+        <li>Knowing the <i>current</i> state of a live cluster/registry</li>
+        <li>Live debugging on a self-hosted runner</li>
+        <li>Ops judgment — "is this safe to deploy?"</li>
+        <li>Final sign-off on security / permissions (Module 15)</li>
+        <li>Knowing your org's approval rules (Modules 13/14)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><b>Escalation rule:</b> if Copilot cannot explain an error confidently, that's a signal to check the environment (registry, runner, OIDC config) rather than the workflow — a confident-but-wrong explanation usually means the context was too thin.</div>
+</section>
+
+</main>
+<footer>© Stalwart Learning · Confidential · Module 17 of 20 · Source: course outline Session 4 · For training use only.</footer>
+
+<script>
+/* 17.2 — failure scenarios */
+const CASES = {
+  oidc:{
+    log:`Error response from daemon: Get "https://acrdemo.azurecr.io/v2/":
+  unauthorized: authentication required
+Error: Process completed with exit code 1.`,
+    out:`1. Diagnosis
+The build succeeded but the PUSH to ACR was rejected — so this
+is not a build problem. The docker/login-action step must have
+failed silently OR the token it used lacks AcrPush scope.
+
+2. Root cause (most likely)
+The job is missing 'id-token: write' in permissions: (Module 12),
+OR the Azure federated credential subject claim doesn't match the
+job's environment: (Module 13 §7), OR the principal lacks AcrPush.
+
+3. Fix — add to the push-image job:
+
+  permissions:
+    contents: read
+    id-token: write          # OIDC can't mint tokens without this
+
+4. Verify
+Re-run and confirm azure/login emits "Retrieving token" and
+docker login returns "Login Succeeded".`,
+    d:'<b>Diagnosis-first is the discipline.</b> The fix name-checks the exact module mechanism (OIDC subject claim / <code>permissions:</code>), not a generic "check your credentials". That specificity is what you look for before trusting any Copilot fix.'},
+  cache:{
+    log:`Cache hit found on: ubuntu-latest
+Cache entry not found for key: node-modules-...
+  Cache not found for input keys: ...
+Running npm ci
+npm ERR! code EINTEGRITY
+npm ERR! Cannot read tarball: lockfile changed since...`,
+    out:`1. Diagnosis
+The dependency cache MISSED, so npm ci re-resolved the tree and
+the lockfile no longer matches node_modules state — EINTEGRITY.
+
+2. Root cause
+A cache key that doesn't include the lockfile hash, OR the lockfile
+changed between the cache-fill and the consuming job.
+
+3. Fix — key the cache on the lockfile:
+
+  - uses: actions/cache@v4
+    with:
+      path: ~/.npm
+      key: npm-\${{ hashFiles('package-lock.json') }}
+      restore-keys: |
+        npm-
+
+4. Verify
+Rerun: the job should show "Cache hit found" for the node-modules key.`,
+    d:'<b>Pattern matching, done right.</b> Cache failures are the most common "works on re-run" failures — Copilot correctly routes the fix to the <i>key</i>, which is where cache misses come from.'},
+  perm:{
+    log:`fatal: unable to access 'https://github.com/org/ci-gitops/':
+  The requested URL returned error: 403
+Error: Resource not accessible by integration
+  GITHUB_TOKEN permissions for 'contents' are insufficient`,
+    out:`1. Diagnosis
+The GitOps manifest bump failed: GITHUB_TOKEN tried to write to
+another repo and was denied. The token defaults to contents: read.
+
+2. Root cause
+Two options: the job lacks 'contents: write' in permissions:, OR
+the target repo is not accessible to this token at all (the
+hand-off needs a dedicated bot token — Module 11).
+
+3. Fix — scope the hand-off job:
+
+  permissions:
+    contents: write     # ONLY this job
+
+...or for cross-repo GitOps (preferred): checkout the manifest repo
+with a GITOPS_APP_TOKEN secret instead of GITHUB_TOKEN.
+
+4. Verify
+Re-run; the manifest commit should appear in ci-gitops.`,
+    d:'<b>Least-privilege framing.</b> Copilot should ask <i>whether</i> you even want the token to write cross-repo — the right answer is often a dedicated bot token, not a broader <code>permissions:</code> block (Module 15).'
+  }
+};
+const failBox = document.getElementById('log-tail');
+const copBox = document.getElementById('cop-out');
+function renderCase(key){
+  const c=CASES[key];
+  failBox.innerHTML='<span class="ln dim">$ tail -n 25 _logs/run_422.txt</span><span class="ln err">'+c.log.replace(/\n/g,'<br>')+'</span>';
+  copBox.innerHTML='<span class="ln dim">● GitHub Copilot</span>'+c.out.split('\n').map(l=>'<span class="ln">'+l.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</span>').join('');
+  document.getElementById('diag-explain').innerHTML=c.d;
+}
+document.getElementById('failures').addEventListener('click', e=>{
+  const c=e.target.closest('.sym'); if(!c) return;
+  document.querySelectorAll('#failures .sym').forEach(x=>x.classList.toggle('sel', x===c));
+  renderCase(c.dataset.f);
+});
+renderCase('oidc');
+
+/* 17.3 — prompt builder */
+const PARTS = {
+  log:'[paste the failing log tail — the last ~50 lines of the failing step]',
+  wf:'[attach/open .github/workflows/<name>.yml — the job that failed]',
+  repo:'Repo: <org>/<service> · what the step was trying to do · runner type',
+  cons:'Constraints: OIDC to Azure, ACR registry, environment gates, self-hosted runner',
+  ask:'1) Diagnose what failed and why. 2) State root cause. 3) Propose a minimal YAML fix as a diff. 4) Tell me how to verify.'
+};
+const promptOrder = ['log','wf','repo','cons','ask'];
+const promptOn = [true,true,true,true,true];
+function renderPrompt(){
+  document.querySelectorAll('#prompt-chips button').forEach((b,i)=>b.classList.toggle('primary', promptOn[i]));
+  const text = promptOrder.filter((k,i)=>promptOn[i]).map(k=>PARTS[k]).join('\n\n');
+  document.getElementById('prompt-out').textContent = text || 'No parts selected.';
+  const n = promptOn.filter(Boolean).length;
+  document.getElementById('prompt-explain').innerHTML = n===5 ? '<b>Complete prompt.</b> Log + context + constraints + explicit ask = a fix Copilot can be held accountable for.' : (n<2 ? 'Too thin — Copilot will guess. Add at least the log <i>and</i> the workflow file.' : 'Getting there — add the constraints and the explicit "diagnose first, then fix" ask for the strongest answers.');
+}
+document.getElementById('prompt-chips').addEventListener('click', e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  const i=promptOrder.indexOf(b.dataset.p); promptOn[i]=!promptOn[i]; renderPrompt();
+});
+renderPrompt();
+
+/* 17.4 — guardrails */
+const GUARD = {
+  perm:'<b>Permissions unchanged?</b> Did Copilot quietly widen <code>permissions:</code> to make the fix "just work"? Any added scope must be job-level and genuinely needed (Module 15).',
+  pin:'<b>SHA pins intact?</b> A new <code>uses:</code> must be pinned to a full-length SHA with a version comment — reject any tag or floating ref Copilot introduces.',
+  ptr:'<b>No <code>pull_request_target</code>?</b> If the proposed fix introduces it, that\'s an immediate red flag — it runs PR code with write privileges (Module 15 §2).',
+  root:'<b>Real root cause?</b> Is the fix addressing the <i>why</i> from the diagnosis, or papering over it (e.g. retry-wrapping a deterministic failure)?'
+};
+document.getElementById('guard').addEventListener('click', e=>{
+  const c=e.target.closest('.circ'); if(!c) return;
+  document.querySelectorAll('#guard .circ').forEach(x=>x.classList.toggle('sel', x===c));
+  document.getElementById('guard-explain').innerHTML = GUARD[c.dataset.g];
+});
+document.getElementById('guard-explain').innerHTML = GUARD.perm;
+</script>
+</body>
+</html>
