@@ -25,13 +25,13 @@ jobs:
       - name: Convert all Markdown files to PDF
         run: |
           mkdir -p pdf-output
-          # Find and convert all markdown files recursively, placing them in pdf-output
+          # Loop through all markdown files and convert them properly
           find . -name "*.md" -not -path "*/.*" | while read file; do
             echo "Converting $file..."
-            md-to-pdf "$file" --config-file || true
+            npx md-to-pdf "$file" || true
           done
-          # Move generated PDFs into the output folder
-          mv *.pdf pdf-output/ 2>/dev/null || true
+          # Move all generated PDFs into the output folder
+          find . -maxdepth 2 -name "*.pdf" -exec mv {} pdf-output/ \; 2>/dev/null || true
 
       - name: Upload PDF Artifacts
         uses: actions/upload-artifact@v4
