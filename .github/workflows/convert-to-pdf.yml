@@ -17,12 +17,13 @@ jobs:
       - name: Generate PDFs from Markdown
         uses: baileyjm02/markdown-to-pdf@v1
         with:
-          input_path: .
-          output_dir: ./pdf-output   # Added ./ to explicitly keep it inside the workspace
+          input_path: '.'
+          output_dir: 'pdf-output'
           table_of_contents: true
 
       - name: Upload PDF Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: markdown-pdfs
-          path: ./pdf-output/*.pdf
+          path: pdf-output/
+          if-no-files-found: error
