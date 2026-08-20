@@ -5,7 +5,7 @@ on:
     branches:
       - main  # Change to 'master' if your default branch is master
     paths:
-      - '**.md' # Triggers only when markdown files are updated
+      - '**/*.md'   # Matches any .md file in any subfolder (e.g., folder/subfolder/file.md)
 
 jobs:
   build-pdf:
@@ -15,12 +15,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Run the Markdown-to-PDF conversion action
+      # Step 2: Generate PDFs from all Markdown files across all paths
       - name: Generate PDFs from Markdown
         uses: baileyjm02/markdown-to-pdf@v1
         with:
-          input_path: .          # Root directory (scans all folders for .md files)
-          output_dir: pdf-output # Folder where generated PDFs will be saved
+          input_path: .           # Scans the root and all subdirectories recursively
+          output_dir: pdf-output  # Folder where generated PDFs will be bundled
           table_of_contents: true # Optional: generates a TOC
 
       # Step 3: Upload the generated PDFs as artifacts for download
